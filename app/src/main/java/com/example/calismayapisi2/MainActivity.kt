@@ -1,6 +1,7 @@
 package com.example.calismayapisi2
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -24,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.example.calismayapisi2.ui.theme.CalismaYapisi2Theme
+import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,19 +53,14 @@ fun SayfaGecisleri() {
         composable("anasayfa") {
             AnaSayfa(navController = navController)
         }
-        composable("sayfa_a/{isim}/{yas}/{boy}/{bekarMi}", //veri alma kismi
+        composable("sayfa_a/{nesne}", //veri alma kismi
             arguments = listOf(
-                navArgument("isim") { type = NavType.StringType },
-                navArgument("yas") { type = NavType.IntType },
-                navArgument("boy") { type = NavType.FloatType },
-                navArgument("bekarMi") { type = NavType.BoolType}
+                navArgument("nesne") { type = NavType.StringType }
                 )
             ) {
-                val isim = it.arguments?.getString("isim")!!
-                val yas = it.arguments?.getInt("yas")!!
-                val boy = it.arguments?.getFloat("boy")!!
-                val bekarMi = it.arguments?.getBoolean("bekarMi")!!
-            SayfaA(navController = navController,isim,yas,boy,bekarMi)
+                val json = it.arguments?.getString("nesne")!!
+                val nesne = Gson().fromJson(json,Kisiler::class.java) //Kisiler turunden nesneye donusturduk
+            SayfaA(navController = navController,nesne) //nesne olarak ilettik
         }
         composable("sayfa_b") {
             SayfaB()
@@ -76,8 +76,11 @@ fun AnaSayfa(navController: NavController) {
     ) {
         Text(text = "AnaSayfa", fontSize = 50.sp)
         Button(onClick = {
-            val x = "ahmet"
-            navController.navigate("sayfa_a/$x/18/1.78f/true") //veri gonderme kismi
+            val kisi = Kisiler("ahmet",18,1.78f,true)
+
+            val kisiJson = Gson().toJson(kisi) //nesnemi String'lestirdim
+
+            navController.navigate("sayfa_a/$kisiJson") //nesnemi String olarak gonderiyorum
         }) {
             Text(text = "Sayfa A'ya Git")
 
@@ -88,7 +91,18 @@ fun AnaSayfa(navController: NavController) {
             sayac.value += 1
         }) {
             Text(text = "Tikla")
-            
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        Log.e("Anasayfa","LaunchedEffect calisti")
+    }
+    SideEffect {
+        Log.e("Anasayfa","SideEffect calisti")
+    }
+    DisposableEffect(Unit){
+        onDispose {
+            Log.e("Anasayfa","DisposableEffect calisti")
         }
     }
 }
