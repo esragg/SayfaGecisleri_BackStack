@@ -18,8 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.example.calismayapisi2.ui.theme.CalismaYapisi2Theme
 
@@ -46,8 +48,19 @@ fun SayfaGecisleri() {
         composable("anasayfa") {
             AnaSayfa(navController = navController)
         }
-        composable("sayfa_a") {
-            SayfaA(navController = navController)
+        composable("sayfa_a/{isim}/{yas}/{boy}/{bekarMi}", //veri alma kismi
+            arguments = listOf(
+                navArgument("isim") { type = NavType.StringType },
+                navArgument("yas") { type = NavType.IntType },
+                navArgument("boy") { type = NavType.FloatType },
+                navArgument("bekarMi") { type = NavType.BoolType}
+                )
+            ) {
+                val isim = it.arguments?.getString("isim")!!
+                val yas = it.arguments?.getInt("yas")!!
+                val boy = it.arguments?.getFloat("boy")!!
+                val bekarMi = it.arguments?.getBoolean("bekarMi")!!
+            SayfaA(navController = navController,isim,yas,boy,bekarMi)
         }
         composable("sayfa_b") {
             SayfaB()
@@ -63,7 +76,7 @@ fun AnaSayfa(navController: NavController) {
     ) {
         Text(text = "AnaSayfa", fontSize = 50.sp)
         Button(onClick = {
-            navController.navigate("sayfa_a")
+            navController.navigate("sayfa_a/ahmet/18/1.78f/true") //veri gonderme kismi
         }) {
             Text(text = "Sayfa A'ya Git")
 
