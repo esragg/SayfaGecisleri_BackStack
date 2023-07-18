@@ -76,7 +76,8 @@ fun AnaSayfa(navController: NavController) {
     ) {
         Text(text = "AnaSayfa", fontSize = 50.sp)
         Button(onClick = {
-            navController.navigate("sayfa_a/ahmet/18/1.78f/true") //veri gonderme kismi
+            val x = "ahmet"
+            navController.navigate("sayfa_a/$x/18/1.78f/true") //veri gonderme kismi
         }) {
             Text(text = "Sayfa A'ya Git")
 
